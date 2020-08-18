@@ -1,0 +1,200 @@
+= TimeScheduler
+
+TimeScheduler is yet another library for single/periodical event scheduler.
+
+== Installation
+
+Add this line to your application's Gemfile:
+
+[source,ruby]
+----
+gem 'time_scheduler'
+----
+
+And then execute:
+
+    $ bundle install
+
+Or install it yourself as:
+
+    $ gem install time_scheduler
+    or
+    $ gem install -l time_scheduler-x.x.x.gem
+
+== Usage
+
+=== Example 1
+
+[source,ruby]
+----
+require  "time_scheduler"
+
+Scheduler  =  TimeScheduler.new
+
+Signal.trap( :INT ) do
+  exit
+end
+
+goal  =  Time.now + 5
+while  time  =  Scheduler.wait( sec: "*" )
+  p time
+  break    if time > goal
+end
+
+goal  =  Time.now + 5
+Scheduler.wait( :check, sec: "*" ) do |time|
+  p time
+  Scheduler.cancel( :check )    if time > goal
+end
+
+sleep  10
+----
+
+=== Example 2
+
+[source,ruby]
+----
+require  "time_scheduler"
+
+Scheduler  =  TimeScheduler.new
+
+Signal.trap( :INT ) do
+  exit
+end
+
+Scheduler.wait( sec: "*/5" ) do |time|
+  p [time, :sec5]
+end
+
+Scheduler.wait( cron: "*/2 * * * *" ) do |time|
+  p [time, :cron]
+end
+
+Scheduler.wait( at: Time.now + 30 ) do |time|
+  p [time, :quit]
+  exit
+end
+
+sleep
+----
+
+== Reference
+
+=== Create a new TimeScheduler.
+
+[source,ruby]
+----
+TimeScheduler.new
+----
+
+* Result:
+  ** TimeScheduler object.
+
+* Parameter:
+  ** None.
+
+=== Schedule event.
+
+[source,ruby]
+----
+TimeScheduler=wait( topic = Time.now.iso8601(6),
+                      at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
+                      &block )
+----
+
+* Result:
+  ** with block:
+    *** topic string.
+  ** without block:
+    *** event time.
+
+* Parameter:
+  ** topic:  topic for setup/reset operation. (default: nil)
+  ** at:  time. Time or String object. (default: nil)
+  ** cron:  set of min, hour, day, month, wday pattern. (default: nil)
+  ** year:  year. unlimited range is denied. (default: nil)
+  ** month:  month. 1..12, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec. (default: nil)
+  ** day:  day of month. 1..31. (default: nil)
+  ** wday:  day of week. 0..7, sun, mon, tue, wed, thr, fri, sat. (default: nil)
+  ** hour:  minute. 0..23. (default: nil)
+  ** min:  minute. 0..59. (default: nil)
+  ** sec:  second. 0..59. (default: 0)
+  ** msec:  millisecond. 0..999. (default: nil), If msec is assigned, then other parameters are ignored.
+    In detail, it can use "*" as wildcard.
+
+=== Get event topics.
+
+[source,ruby]
+----
+TimeScheduler#topics
+----
+
+* Result:
+  ** array of topics.
+
+* Parameter:
+  ** none.
+
+=== Cancel event.
+
+[source,ruby]
+----
+TimeScheduler#cancel( *topics )
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** topic:  topic for stop operation.
+
+=== Check activity.
+
+[source,ruby]
+----
+TimeScheduler#active?
+----
+
+* Result:
+  ** false/true.
+
+* Parameter:
+  ** none.
+
+=== Suspend all events.
+
+[source,ruby]
+----
+TimeScheduler#suspend
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** none.
+
+=== Resume all events.
+
+[source,ruby]
+----
+TimeScheduler#resume
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** none.
+
+== Caution
+
+Because it is calculated in local time, it does not work as expected when switching to daylight saving time.
+
+== Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/arimay/time_scheduler.
+
+== License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).

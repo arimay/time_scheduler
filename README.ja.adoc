@@ -1,0 +1,199 @@
+= TimeScheduler
+
+TimeScheduler は一度の/周期的なイベントスケジューラのライブラリのひとつ。
+
+== 導入
+
+アプリの Gemfile にこの行を追加
+
+[source,ruby]
+----
+gem 'time_scheduler'
+----
+
+それから実行
+
+    $ bundle install
+
+または次のように手動で導入
+
+    $ gem install time_scheduler
+    or
+    $ gem install -l time_scheduler-x.x.x.gem
+
+== 使い方
+
+=== Example 1
+
+[source,ruby]
+----
+require  "time_scheduler"
+
+Scheduler  =  TimeScheduler.new
+
+Signal.trap( :INT ) do
+  exit
+end
+
+goal  =  Time.now + 5
+while  time  =  Scheduler.wait( sec: "*" )
+  p time
+  break    if time > goal
+end
+
+goal  =  Time.now + 5
+Scheduler.wait( :check, sec: "*" ) do |time|
+  p time
+  Scheduler.cancel( :check )    if time > goal
+end
+
+sleep  10
+----
+
+=== Example 2
+
+[source,ruby]
+----
+require  "time_scheduler"
+
+Scheduler  =  TimeScheduler.new
+
+Signal.trap( :INT ) do
+  exit
+end
+
+Scheduler.wait( sec: "*/5" ) do |time|
+  p [time, :sec5]
+end
+
+Scheduler.wait( cron: "*/2 * * * *" ) do |time|
+  p [time, :cron]
+end
+
+Scheduler.wait( at: Time.now + 30 ) do |time|
+  p [time, :quit]
+  exit
+end
+
+sleep
+----
+
+== リファレンス
+
+=== 新たな TimeScheduler を作成する.
+
+[source,ruby]
+----
+TimeScheduler.new
+----
+
+* Result:
+  ** TimeScheduler オブジェクト.
+
+* Parameter:
+  ** なし.
+
+=== イベントを計画する.
+
+[source,ruby]
+----
+TimeScheduler#wait( topic = Time.now.iso8601(6),
+                      at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
+                      &block )
+----
+
+* Result:
+  ** with block:
+    *** topic string.
+  ** without block:
+    *** event time.
+
+* Parameter:
+  ** at:  日時. Time または String オブジェクト. (default: nil)
+  ** cron:  分、時、日、月、曜パターンのセット. (default: nil)
+  ** year:  年. 範囲制限なしは拒否される. (default: nil)
+  ** month:  月. 1..12, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec. (default: nil)
+  ** day:  日. 1..31. (default: nil)
+  ** wday:  曜. 0..7, sun, mon, tue, wed, thr, fri, sat. (default: nil)
+  ** hour:  時. 0..23. (default: nil)
+  ** min:  分. 0..59. (default: nil)
+  ** sec:  秒. 0..59. (default: 0)
+  ** msec:  ミリ秒. 0..999. (default: nil), ミリ秒が指定されたとき, 他のパラメータは無視される.
+    詳細では, ワイルドカードとして "*" を使用できる.
+
+=== トピック名を得る.
+
+[source,ruby]
+----
+TimeScheduler#topics
+----
+
+* Result:
+  ** array of topics.
+
+* Parameter:
+  ** なし.
+
+=== イベントを解除する.
+
+[source,ruby]
+----
+TimeScheduler#cancel( *topics )
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** topic:  topic for stop operation.
+
+=== 稼働中か調べる.
+
+[source,ruby]
+----
+TimeScheduler#active?
+----
+
+* Result:
+  ** false/true.
+
+* Parameter:
+  ** なし.
+
+=== すべてのイベントを一時停止する.
+
+[source,ruby]
+----
+TimeScheduler#suspend
+----
+
+* Result:
+  * nil.
+
+* Parameter:
+  ** なし.
+
+=== すべてのイベントを再開する.
+
+[source,ruby]
+----
+TimeScheduler#resume
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** なし.
+
+== 注意
+
+地域時刻で計算しているため、夏時間の切り替わりにおいて期待しない挙動となる.
+
+== 貢献
+
+不具合報告とプルリクエストは GitHub https://github.com/arimay/time_cursor まで. 
+
+== ライセンス
+
+この Gem は、 http://opensource.org/licenses/MIT[MITライセンス] の条件に基づいてオープンソースとして入手できる.
