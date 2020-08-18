@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["arima.yasuhiro@gmail.com"]
 
   spec.summary       = %q{ Library for simple event scheduler. }
-  spec.description   = %q{ TimeScheduler is yet another library for single/periodical event scheduler. }
+  spec.description   = %q{ Yet another library for single/periodical event scheduler. }
   spec.homepage      = "https://github.com/arimay/time_scheduler"
 
   # Specify which files should be added to the gem when it is released.

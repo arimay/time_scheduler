@@ -1,6 +1,6 @@
 = TimeScheduler
 
-TimeScheduler is yet another library for single/periodical event scheduler.
+Yet another library for single/periodical event scheduler.
 
 == Installation
 
@@ -98,18 +98,18 @@ TimeScheduler.new
 [source,ruby]
 ----
 TimeScheduler#wait( topic = Time.now.iso8601(6),
-                      at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
-                      &block )
+                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
+                    &block )
 ----
 
 * Result:
-  ** with block:
-    *** topic string.
-  ** without block:
-    *** event time.
+  ** with block: (Non-blocing Mode)
+    *** topic: event identify topic for operation.
+  ** without block: (Blocking Mode)
+    *** time: event time. time object.
 
 * Parameter:
-  ** topic:  topic for setup/reset operation. (default: nil)
+  ** topic:  event identify topic for operation. (default: Time.now.iso8601(6))
   ** at:  time. Time or String object. (default: nil)
   ** cron:  set of min, hour, day, month, wday pattern. (default: nil)
   ** year:  year. unlimited range is denied. (default: nil)
@@ -122,6 +122,9 @@ TimeScheduler#wait( topic = Time.now.iso8601(6),
   ** msec:  millisecond. 0..999. (default: nil), If msec is assigned, then other parameters are ignored.
     In detail, it can use "*" as wildcard.
 
+* Block Parameter:
+  ** time: event time. time object.
+
 === Get event topics.
 
 [source,ruby]
@@ -130,7 +133,7 @@ TimeScheduler#topics
 ----
 
 * Result:
-  ** array of topics.
+  ** topics: array of topics.
 
 * Parameter:
   ** none.
@@ -146,7 +149,7 @@ TimeScheduler#cancel( *topics )
   ** nil.
 
 * Parameter:
-  ** topic:  topic for stop operation.
+  ** topic:  topic for cancel operation.
 
 === Check activity.
 
@@ -197,4 +200,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/arimay
 
 == License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the http://opensource.org/licenses/MIT[MIT License].

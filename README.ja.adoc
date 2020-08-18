@@ -1,6 +1,6 @@
 = TimeScheduler
 
-TimeScheduler は一度の/周期的なイベントスケジューラのライブラリのひとつ。
+一度の/周期的なイベントスケジューラのライブラリのひとつ。
 
 == 導入
 
@@ -98,17 +98,18 @@ TimeScheduler.new
 [source,ruby]
 ----
 TimeScheduler#wait( topic = Time.now.iso8601(6),
-                      at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
-                      &block )
+                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
+                    &block )
 ----
 
 * Result:
-  ** with block:
-    *** topic string.
-  ** without block:
-    *** event time.
+  ** ブロック引数あり: (Non-blocing Mode)
+    *** topic. イベント操作用識別トピック.
+  ** ブロック引数なし: (Blocking Mode)
+    *** time. イベント日時. Time オブジェクト.
 
 * Parameter:
+  ** topic: イベント操作用識別トピック (default: Time.now.iso8601(6))
   ** at:  日時. Time または String オブジェクト. (default: nil)
   ** cron:  分、時、日、月、曜パターンのセット. (default: nil)
   ** year:  年. 範囲制限なしは拒否される. (default: nil)
@@ -121,6 +122,9 @@ TimeScheduler#wait( topic = Time.now.iso8601(6),
   ** msec:  ミリ秒. 0..999. (default: nil), ミリ秒が指定されたとき, 他のパラメータは無視される.
     詳細では, ワイルドカードとして "*" を使用できる.
 
+* Block Parameter:
+  ** time: イベント日時. Time オブジェクト.
+
 === トピック名を得る.
 
 [source,ruby]
@@ -129,7 +133,7 @@ TimeScheduler#topics
 ----
 
 * Result:
-  ** array of topics.
+  ** topics: トピック配列.
 
 * Parameter:
   ** なし.
@@ -145,7 +149,7 @@ TimeScheduler#cancel( *topics )
   ** nil.
 
 * Parameter:
-  ** topic:  topic for stop operation.
+  ** topic:  取消対象のトピック.
 
 === 稼働中か調べる.
 
@@ -168,7 +172,7 @@ TimeScheduler#suspend
 ----
 
 * Result:
-  * nil.
+  ** nil.
 
 * Parameter:
   ** なし.
