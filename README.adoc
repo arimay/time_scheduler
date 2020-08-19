@@ -2,6 +2,14 @@
 
 Yet another library for single/periodical event scheduler.
 
+== Features
+
+* A thread based scheduler that runs once or periodically at a specified datetime.
+* The condition is specified by a format such as crontab or by keyword argument.
+* Time can be specified in less than 1 second. However, the behavior depends on the environment.
+* Suspend/resume function.
+* Function to change the datetime conditions during execution.
+
 == Installation
 
 Add this line to your application's Gemfile:
@@ -201,3 +209,5 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/arimay
 == License
 
 The gem is available as open source under the terms of the http://opensource.org/licenses/MIT[MIT License].
+
+Copyright (c) ARIMA Yasuhiro <arima.yasuhiro@gmail.com>
