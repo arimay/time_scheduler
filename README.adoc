@@ -129,7 +129,7 @@ TimeScheduler.new
 [source,ruby]
 ----
 TimeScheduler#wait( topic = Time.now.iso8601(6),
-                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, 
+                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil,
                     hour: nil, min: nil, sec: 0, msec: nil,
                     &block )
 ----
