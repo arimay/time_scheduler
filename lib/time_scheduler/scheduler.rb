@@ -179,7 +179,35 @@ class TimeScheduler
     end
   end
 
+  class Counter
+    def initialize
+      @count  =  0
+      @mutex  =  Mutex.new
+    end
+
+    def incr
+      @mutex.synchronize do
+        @count  +=  1
+      end
+    end
+
+    def decr
+      @mutex.synchronize do
+        @count  -=  1    if  @count > 0
+        @count
+      end
+    end
+
+    def reset
+      @mutex.synchronize do
+        @count  =  0
+      end
+    end
+  end
+
   def initialize
+    @first_counter  =  Hash.new{|h,k| h[k] = Counter.new }
+    @last_counter   =  Hash.new{|h,k| h[k] = Counter.new }
   end
 
   def scheduler
@@ -220,6 +248,26 @@ class TimeScheduler
 
   def resume
     TimeScheduler::Schedule.resume
+  end
+
+  def first_only( ident = nil, timeout: 1, &block )
+    key  =  [ caller[0], ident.to_s ].join(":")
+    count  =  @first_counter[key].incr
+    block.call    if count == 1
+    ::Thread.start( key ) do |key|
+      ::Kernel.sleep  timeout
+      @first_counter[key].decr
+    end
+  end
+
+  def last_only( ident = nil, timeout: 1, &block )
+    key  =  [ caller[0], ident.to_s ].join(":")
+    @last_counter[key].incr
+    ::Thread.start( key ) do |key|
+      ::Kernel.sleep  timeout
+      count  =  @last_counter[key].decr
+      block.call    if count == 0
+    end
   end
 
 end

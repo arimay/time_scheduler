@@ -9,6 +9,7 @@
 * 時刻は1秒未満で指定することが可能. ただし、挙動は環境依存.
 * 一時停止/再開機能.
 * 実行中の日時条件変更機能.
+* 指定された制限時間内に一度だけ実行する.
 
 == 導入
 
@@ -86,6 +87,28 @@ end
 sleep
 ----
 
+=== Example 3
+
+[source,ruby]
+----
+require  "time_scheduler"
+
+Scheduler  =  TimeScheduler.new
+
+(0..4).each do
+  p [Time.now.iso8601(3), :cycle]
+  Scheduler.first_only( timeout: 10 ) do
+    p [Time.now.iso8601(3), :first]
+  end
+  Scheduler.last_only( timeout: 10 ) do
+    p [Time.now.iso8601(3), :last]
+  end
+  sleep 1
+end
+
+sleep
+----
+
 == リファレンス
 
 === 新たな TimeScheduler を作成する.
@@ -106,7 +129,8 @@ TimeScheduler.new
 [source,ruby]
 ----
 TimeScheduler#wait( topic = Time.now.iso8601(6),
-                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, hour: nil, min: nil, sec: 0, msec: nil,
+                    at: nil, cron: nil, year: nil, month: nil, day: nil, wday: nil, 
+                    hour: nil, min: nil, sec: 0, msec: nil,
                     &block )
 ----
 
@@ -129,6 +153,7 @@ TimeScheduler#wait( topic = Time.now.iso8601(6),
   ** sec:  秒. 0..59. (default: 0)
   ** msec:  ミリ秒. 0..999. (default: nil), ミリ秒が指定されたとき, 他のパラメータは無視される.
     詳細では, ワイルドカードとして "*" を使用できる.
+  ** block:  条件に適合する日時に実行する内容.
 
 * Block Parameter:
   ** time: イベント日時. Time オブジェクト.
@@ -196,6 +221,40 @@ TimeScheduler#resume
   ** nil.
 
 * Parameter:
+  ** なし.
+
+=== 最初に一度だけブロックを呼び出して、制限時間内の再呼び出しは無視する.
+
+[source,ruby]
+----
+TimeScheduler#first_only( ident = nil, timeout: 1, &block )
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** ident:     追加識別子.
+  ** timeout:   監視時間制限（秒）.
+
+* Block Parameter:
+  ** なし.
+
+=== 制限時間内に再呼び出しがないとき、最後に一度だけブロックを呼び出す.
+
+[source,ruby]
+----
+TimeScheduler#last_only( ident = nil, timeout: 1, &block )
+----
+
+* Result:
+  ** nil.
+
+* Parameter:
+  ** ident:     追加識別子.
+  ** timeout:   監視時間制限（秒）.
+
+* Block Parameter:
   ** なし.
 
 == 注意
