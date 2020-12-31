@@ -73,7 +73,7 @@ class TimeScheduler
 
           next    if  @@pause
 
-          ::Thread.start( time ) do
+          ::Thread.start( time ) do |time|
             @schedule_mutex.synchronize do
               @action.call( time )
             end

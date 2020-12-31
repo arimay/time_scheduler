@@ -1,4 +1,3 @@
-require "set"
 
 class TimeScheduler
 
@@ -28,7 +27,7 @@ class TimeScheduler
     def initialize( **option )
       @event_mutex  =  ::Mutex.new
       @event_queue  =  ::Queue.new
-      @event_set  =  ::SortedSet.new
+      @event_set  =  OrderSet.new
       run
     end
 
@@ -62,7 +61,6 @@ class TimeScheduler
             @event_queue.pop
             @event_mutex.synchronize do
               event_item  =  @event_set.first
-
               now  =  Time.now
               if  event_item.time <= now
                 @event_set.delete( event_item )
