@@ -24,7 +24,7 @@ class TimeScheduler
 
     REFRESH_TIME  =  3600.0
 
-    def initialize( **option )
+    def initialize
       @event_mutex  =  ::Mutex.new
       @event_queue  =  ::Queue.new
       @event_set  =  OrderSet.new

@@ -7,15 +7,15 @@ Signal.trap( :INT ) do
 end
 
 Scheduler.wait sec: "*/5" do |time|
-  p [Time.now.iso8601(3), :sec5]
+  p [time.iso8601(3), :sec5]
 end
 
 Scheduler.wait cron: "* * * * *" do |time|
-  p [Time.now.iso8601(3), :cron]
+  p [time.iso8601(3), :cron]
 end
 
 Scheduler.wait at: (Time.now + 60) do |time|
-  p [Time.now.iso8601(3), :quit]
+  p [time.iso8601(3), :quit]
   exit
 end
 

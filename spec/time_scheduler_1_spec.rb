@@ -4,7 +4,7 @@ RSpec.describe TimeScheduler do
   it 'time = scheduler.wait(sec:"*")' do
     scheduler  =  TimeScheduler.new
     goal  =  Time.now + 3
-    while  time  =  scheduler.wait( sec: "*" )
+    while ( time  =  scheduler.wait( sec: "*" ) )
       break    if time > goal
     end
     result  =  ( ( time.to_i - goal.to_i ).abs <= 1 )

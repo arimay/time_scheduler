@@ -73,9 +73,9 @@ class TimeScheduler
 
           next    if  @@pause
 
-          ::Thread.start( time ) do |time|
+          ::Thread.start( time ) do |t|
             @schedule_mutex.synchronize do
-              @action.call( time )
+              @action.call( t )
             end
           end
         end
@@ -135,7 +135,7 @@ class TimeScheduler
     end
 
     def wait_reset( topic, **option, &block )
-      if  schedule  =  schedules[topic]
+      if ( schedule  =  schedules[topic] )
         schedule.wait_reset( **option, &block )
         topic
       end
@@ -161,7 +161,7 @@ class TimeScheduler
     end
 
     def cancel( topic )
-      if  schedule  =  schedules[topic]
+      if ( schedule  =  schedules[topic] )
         schedule.cancel
       end
     rescue => e
@@ -254,18 +254,18 @@ class TimeScheduler
     key  =  [ caller[0], ident.to_s ].join(":")
     count  =  @first_counter[key].incr
     block.call    if count == 1
-    ::Thread.start( key ) do |key|
+    ::Thread.start( key ) do |k|
       ::Kernel.sleep  timeout
-      @first_counter[key].decr
+      @first_counter[k].decr
     end
   end
 
   def last_only( ident = nil, timeout: 1, &block )
     key  =  [ caller[0], ident.to_s ].join(":")
     @last_counter[key].incr
-    ::Thread.start( key ) do |key|
+    ::Thread.start( key ) do |k|
       ::Kernel.sleep  timeout
-      count  =  @last_counter[key].decr
+      count  =  @last_counter[k].decr
       block.call    if count == 0
     end
   end
